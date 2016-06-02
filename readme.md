@@ -1,6 +1,6 @@
-# eletrontest
+# csvMerger
 
-> My unreal app
+> Electron app for mergin csv-files
 
 
 ## Dev
