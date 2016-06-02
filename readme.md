@@ -1,6 +1,6 @@
 # csvMerger
 
-> Electron app for mergin csv-files
+> Electron app for merging csv-files
 
 
 ## Dev
