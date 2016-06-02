@@ -1,0 +1,40 @@
+{
+  "name": "eletronapp",
+  "productName": "Electronapp",
+  "version": "1.0.0",
+  "description": "My unreal app",
+  "license": "MIT",
+  "scripts": {
+    "test": "xo",
+    "start": "electron .",
+    "build": "electron-packager . --out=dist --app-version=%npm_package_version% --prune --asar --overwrite --all",
+    "build-win": "electron-packager . --out=dist --app-version=%npm_package_version% --prune --asar --overwrite --platform=win32 --arch=x64"
+  },
+  "files": [
+    "index.js",
+    "index.html",
+    "index.css"
+  ],
+  "keywords": [
+    "electron-app",
+    "electron"
+  ],
+  "dependencies": {
+    "csv": "^1.1.0",
+    "electron-debug": "^1.0.0",
+    "q": "^1.4.1"
+  },
+  "devDependencies": {
+    "devtron": "^1.1.0",
+    "electron-packager": "^7.0.0",
+    "electron-prebuilt": "^1.0.1",
+    "xo": "^0.15.0"
+  },
+  "xo": {
+    "esnext": true,
+    "envs": [
+      "node",
+      "browser"
+    ]
+  }
+}

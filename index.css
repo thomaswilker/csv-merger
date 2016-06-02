@@ -1,0 +1,48 @@
+body {
+	padding: 0;
+	margin: 0;
+	font-family: -apple-system, 'Helvetica Neue', Helvetica, sans-serif;
+}
+
+
+.content {
+	position: absolute;
+	min-width: 100%;
+	min-height: 100%;
+	/*background: -webkit-linear-gradient(right, #333743, #404452);
+	  background: -o-linear-gradient(right, #333743, #404452);
+	  background: linear-gradient(to left, #333743, #404452);*/
+   background-color:white;
+}
+
+.flexcontainer {
+   display: -webkit-flex;
+   display: flex;
+   -webkit-flex-direction: row
+   flex-direction: row;
+   -webkit-align-items: center;
+   align-items: center;
+   -webkit-justify-content: center;
+   justify-content: center;
+}
+
+.import {
+   transition: all linear 1s;
+}
+
+.import.ng-hide {
+   opacity:0
+}
+
+.resultFileData {
+   transition: all linear 1s;
+   opacity:1;
+}
+
+.resultFileData td {
+   color: black
+}
+
+.resultFileData.ng-hide {
+   opacity:0
+}

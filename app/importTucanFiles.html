@@ -1,0 +1,16 @@
+<div style="position:fixed;top:0px;left:0px;min-height:40px;width:100%">
+  <button class="btn btn-primary" style="margin:10px" ui-sref="importResults">Zurück</button>
+</div>
+<div class="flexcontainer" style="margin-top:20px">
+  <div class="row" style="text-align:center" class="import">
+      <p><i class="fa fa-files-o fa-4x" style="color:#333743" aria-hidden="true"></i></p>
+      <button class="btn btn-default" id="tucan" ng-click="openFiles()">
+        <span ng-show="tucanFilesData.length > 0">Weitere</span> Tucan Datei(en) importieren
+      </button>
+  </div>
+</div>
+<div class="row" ng-show="tucanFilesData.length > 0">
+  <div class="col-xs-12">
+    {{registrations.length}} Datei(en) importiert
+  </div>
+</div>

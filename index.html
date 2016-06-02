@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+ 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>Electron boilerplate</title>
+		<link rel="stylesheet" href="index.css">
+		<link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="./bower_components/font-awesome/css/font-awesome.min.css">
+		<link rel="stylesheet" href="./bower_components/nya-bootstrap-select/dist/css/nya-bs-select.min.css">
+		<script>
+			const $ = window.jQuery = require('./bower_components/jquery/dist/jquery.min.js');
+			const ipc = require('electron').ipcRenderer;
+		</script>
+		<script src="./bower_components/angular/angular.js"></script>
+		<script src="./bower_components/angular-animate/angular-animate.min.js"></script>
+		<script src="./bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+		<script src="./bower_components/nya-bootstrap-select/dist/js/nya-bs-select.min.js"></script>
+		<script src="./app/app.js"></script>
+	</head>
+	<body ng-app="csvMerger" ng-controller="appCtrl">
+			<div class="content flexcontainer">
+				<ui-view></ui-view>
+			</div>
+			<div style="position:fixed;min-height:40px;bottom:0px;left:0px;background-color:#dedede;width:100%;font-size:13px;font-weight:bold">
+				<div class="text-center" style="padding:5px;margin:5px;vertical-align:middle;height:100%">
+					<span style="color:#558855" ng-show="results > 0">{{results}} Ergebnisse</span>
+					<span style="color:#558855" ng-show="registrations > 0">{{registrations}} Anmeldungen</span>
+				</div>
+			</div>
+	</body>
+</html>
