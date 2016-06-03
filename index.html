@@ -18,17 +18,7 @@
 		<script src="./bower_components/lodash/dist/lodash.min.js"></script>
 		<script src="./app/app.js"></script>
 	</head>
-	<body ng-app="csvMerger" ng-controller="appCtrl">
-			<div class="content flexcontainer">
-				<ui-view></ui-view>
-			</div>
-			<div style="position:fixed;min-height:40px;bottom:0px;left:0px;background-color:#dedede;width:100%;font-size:13px;font-weight:bold">
-				<div class="text-center" style="padding:5px;margin:5px;vertical-align:middle;height:100%">
-					<button class="btn pull-left" ui-sref="importResults" ng-show="showBackButton">
-						<i class="fa fa-chevron-left fa-2x" aria-hidden="true"></i>
-					</button>
-					<button class="btn" ng-show="results > 0 && registrations > 0"><i class="fa fa-share-square-o" aria-hidden="true"></i> Exportieren</button>
-				</div>
-			</div>
+	<body ng-app="csvMerger">
+			<ui-view class="flexcontainer"></ui-view>
 	</body>
 </html>

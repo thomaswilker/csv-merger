@@ -1,8 +1,8 @@
 {
-  "name": "eletronapp",
-  "productName": "Electronapp",
+  "name": "CSVmerger",
+  "productName": "CSV Merger",
   "version": "1.0.0",
-  "description": "My unreal app",
+  "description": "",
   "license": "MIT",
   "scripts": {
     "test": "xo",

@@ -11,12 +11,7 @@ angular.module('csvMerger', ['ui.router','ngAnimate','nya.bootstrap.select'])
       url: "/",
       templateUrl: "./app/importResults.html",
       controller : 'importResultsCtrl'
-    })
-    .state('importTucanFiles', {
-      url: "/tucan",
-      templateUrl: "./app/importTucanFiles.html",
-      controller : 'importTucanFilesCtrl'
-    })
+    });
 
 })
 .constant('_', window._)
@@ -35,7 +30,7 @@ angular.module('csvMerger', ['ui.router','ngAnimate','nya.bootstrap.select'])
     else return fields[f];
   };
 
-  this.merge = () => {
+  function merge() {
 
     var results = fields.results;
     var resultsMap = results.data.slice(1).reduce((o,c) => {
@@ -46,7 +41,25 @@ angular.module('csvMerger', ['ui.router','ngAnimate','nya.bootstrap.select'])
     }, {});
 
     var registrations = fields.registrations;
-    registrations.forEach((f,index) => f.slice(2).forEach(s => s[5] = resultsMap[s[1]] ? resultsMap[s[1]] : 'x'));
+    registrations.forEach((f,index) => f.slice(2).forEach(s => {
+      var grade = resultsMap[s[1]];
+      if(grade) {
+        s[5] =  grade;
+      } else {
+        s[6] = 'x';
+      }
+    }));
+
+    return { resultsMap : resultsMap, registrations : registrations };
+  }
+
+  this.merge = () => merge();
+
+  this.stats = () => {
+
+    var merged = merge();
+    var resultsMap = merged.resultsMap;
+    var registrations = merged.registrations;
 
     var elements = _.chain(registrations)
                     .map(r => r.slice(2))
@@ -71,59 +84,39 @@ angular.module('csvMerger', ['ui.router','ngAnimate','nya.bootstrap.select'])
   };
 
 })
-.controller('appCtrl', function($rootScope, $scope, csvService) {
-
-    var results = 'results';
-    var registrations = 'registrations';
-    var numResults = (v) => v.data.length - 1;
-    var numRegistrations = (v) =>  v.reduce((i, c) => i + c.length - 2, 0);
-    var apply = (c) => $scope.$apply(c);
-    var setField = (field, value) => $scope[field] = value;
-
-    setField(results, numResults(csvService.value(results)));
-    setField(registrations, numRegistrations(csvService.value(registrations)));
-
-    $scope.$on(results, (e, v) => apply(setField(results, numResults(v))));
-    $scope.$on(registrations, (e, v) => apply(setField(registrations, numRegistrations(v))));
-
-    $scope.$on('$stateChangeStart', function(event, toState, toParams, fromState) {
-      $scope.showBackButton = toState.url !== '/';
-    });
-
-
-})
 .controller('importResultsCtrl', function($scope, csvService) {
 
   $scope.openFile = function() {
     ipc.send('open-klaus-file');
   };
 
+  $scope.openFiles = function() {
+    ipc.send('open-tucan-files');
+  };
+
+  $scope.export = function() {
+    ipc.send('export', csvService.merge().registrations);
+  };
+
   var results = 'results';
+  var registrations = 'registrations';
 
   $scope.results = csvService.value(results);
   csvService.observeField($scope, results);
+
+  $scope.registrations = csvService.value(registrations);
+  csvService.observeField($scope, registrations);
+
+  $scope.$watch(() => [$scope.registrations, $scope.results], (nv, ov) => {
+    if($scope.results.data.length > 0 || $scope.registrations.length > 0) {
+      $scope.stats = csvService.stats();
+    }
+  }, true);
 
   ipc.on(results, function(event, data) {
     var file = { col1 : 2, col2 : 3, data : data};
     csvService.value(results, file);
   });
-
-})
-.controller('importTucanFilesCtrl', function($scope, csvService) {
-
-  $scope.openFiles = function() {
-    ipc.send('open-tucan-files');
-  };
-
-  var registrations = 'registrations';
-  $scope.registrations = csvService.value(registrations);
-  csvService.observeField($scope, registrations);
-
-  $scope.$watch('registrations', (nv, ov) => {
-    if($scope.registrations.length > 0 && csvService.value('results')) {
-      $scope.stats = csvService.merge();
-    }
-  }, true);
 
   ipc.on(registrations, function(event, data) {
     csvService.value(registrations, data);

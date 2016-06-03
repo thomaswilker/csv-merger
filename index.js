@@ -22,8 +22,8 @@ function onClosed() {
 
 function createMainWindow() {
 	const win = new electron.BrowserWindow({
-		width: 600,
-		height: 400
+		width: 800,
+		height: 600
 	});
 
 	win.loadURL(`file://${__dirname}/index.html`);
@@ -91,28 +91,16 @@ ipc.on('open-klaus-file', function (event) {
 	})
 })
 
-ipc.on('generate-export', function(event) {
-	if(klausFile && tucanFiles.length > 0) {
+ipc.on('export', function(event, data) {
+	if(data) {
 
 		dialog.showOpenDialog({
 	    properties: ['openFiles', 'openDirectory']
 	  }, function (files) {
 	    if (files && files.length === 1) {
-
+				console.log('export', data);
 				var dir = files[0];
-				var mmap = klausFile.slice(1).reduce((o,c) => {
-					if(c && c[2]) {
-						o[c[2]] = c[3];
-					}
-					return o;
-				}, {});
-
-				tucanFiles.forEach((f,index) => {
-					f.slice(2).forEach(s => {
-						if(s[1] && mmap[s[1]]) {
-							s[5] = mmap[s[1]];
-						}
-					});
+				data.forEach((f,index) => {
 					stringify(f, {delimiter : '\t'}, function(err, data) {
 						var name = dir + '/tucan-' + index + '.txt';
 						fs.writeFile(name, data, 'utf8', (err) => {
@@ -120,7 +108,6 @@ ipc.on('generate-export', function(event) {
 						});
 					});
 				});
-
 			}
 		})
 	}
