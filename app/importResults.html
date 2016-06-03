@@ -1,19 +1,21 @@
 <div class="flexcontainer">
-  <div style="text-align:center" class="import">
+  <div class="import text-center">
       <p><i class="fa fa-file-text-o fa-4x" style="color:#333743" aria-hidden="true"></i></p>
       <button class="btn btn-default" id="tucan" ng-click="openFile()">Testergebnisse importieren</button>
   </div>
 </div>
 <div class="resultFileData" ng-show="results.data.length > 0" style="margin-top:10px">
   <div class="row" style="margin-top:20px">
-    <div class="col-xs-6">
+    <div class="col-xs-12 text-center">
       <ol class="nya-bs-select" ng-model="results.col1">
         <li nya-bs-option="(i,option) in results.data[0]" data-value="i">
             <a>{{option}}</a>
         </li>
       </ol>
     </div>
-    <div class="col-xs-6">
+  </div>
+  <div class="row" style="margin-top:20px">
+    <div class="col-xs-12 text-center">
       <ol class="nya-bs-select" ng-model="results.col2">
         <li nya-bs-option="(i,option) in results.data[0]" data-value="i">
             <a>{{option}}</a>
@@ -22,12 +24,9 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-xs-6">
-      <span style="color:#992211;font-size:10px" ng-hide="results.col1 > -1">Spalte mit Matrikelnummern wählen</span>
-    </div>
-    <div class="col-xs-6">
-      <span style="color:#992211;font-size:10px" ng-hide="results.col2 > -1">Spalte mit Noten wählen</span>
-    </div>
+      <div class="col-xs-12">
+        <span style="color:#992211;font-size:10px" ng-hide="results.col2 > -1">Spalte mit Noten wählen</span>
+      </div>
   </div>
   <div class="row" ng-show="results.col1 > -1 && results.col2 > -1 && results.col1 !== resultCol" style="margin-top:20px">
     <div class="col-xs-12 text-center">

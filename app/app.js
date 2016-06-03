@@ -19,7 +19,8 @@ angular.module('csvMerger', ['ui.router','ngAnimate','nya.bootstrap.select'])
     })
 
 })
-.service('csvService', function($rootScope) {
+.constant('_', window._)
+.service('csvService', function($rootScope, _) {
 
   var fields = {
     results : { col1 : 0, col2 : 1, data : [] },
@@ -45,14 +46,20 @@ angular.module('csvMerger', ['ui.router','ngAnimate','nya.bootstrap.select'])
     }, {});
 
     var registrations = fields.registrations;
+    registrations.forEach((f,index) => f.slice(2).forEach(s => s[5] = resultsMap[s[1]] ? resultsMap[s[1]] : 'x'));
 
-    registrations.forEach((f,index) => {
-      f.slice(2).forEach(s => {
-        s[5] = resultsMap[s[1]] ? resultsMap[s[1]] : 'x';
-      });
-    });
+    var elements = _.chain(registrations)
+                    .map(r => r.slice(2))
+                    .flatten()
+                    .map(r => { return { matrnr : r[1], grade : r[5] } })
+                    .value();
 
-    console.log(registrations);
+    var partByGrade = _.partition(elements, r => r.grade && r.grade !== 'x');
+    var partByRegistration = _.partition(_.keys(resultsMap), r => _.map(elements, e => e.matrnr).indexOf(r) > -1);
+
+    var stats = { grade : partByGrade, registrated : partByRegistration };
+    return stats;
+
   };
 
   this.observeField = (scope, field) => {
@@ -79,11 +86,11 @@ angular.module('csvMerger', ['ui.router','ngAnimate','nya.bootstrap.select'])
     $scope.$on(results, (e, v) => apply(setField(results, numResults(v))));
     $scope.$on(registrations, (e, v) => apply(setField(registrations, numRegistrations(v))));
 
-    $scope.$watch(() => [$scope.results, $scope.registrations], (nv, ov) => {
-      if($scope.results > 0 && $scope.registrations > 0) {
-        csvService.merge();
-      }
-    }, true);
+    $scope.$on('$stateChangeStart', function(event, toState, toParams, fromState) {
+      $scope.showBackButton = toState.url !== '/';
+    });
+
+
 })
 .controller('importResultsCtrl', function($scope, csvService) {
 
@@ -111,6 +118,12 @@ angular.module('csvMerger', ['ui.router','ngAnimate','nya.bootstrap.select'])
   var registrations = 'registrations';
   $scope.registrations = csvService.value(registrations);
   csvService.observeField($scope, registrations);
+
+  $scope.$watch('registrations', (nv, ov) => {
+    if($scope.registrations.length > 0 && csvService.value('results')) {
+      $scope.stats = csvService.merge();
+    }
+  }, true);
 
   ipc.on(registrations, function(event, data) {
     csvService.value(registrations, data);

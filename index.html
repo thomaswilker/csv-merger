@@ -15,6 +15,7 @@
 		<script src="./bower_components/angular-animate/angular-animate.min.js"></script>
 		<script src="./bower_components/angular-ui-router/release/angular-ui-router.js"></script>
 		<script src="./bower_components/nya-bootstrap-select/dist/js/nya-bs-select.min.js"></script>
+		<script src="./bower_components/lodash/dist/lodash.min.js"></script>
 		<script src="./app/app.js"></script>
 	</head>
 	<body ng-app="csvMerger" ng-controller="appCtrl">
@@ -23,8 +24,10 @@
 			</div>
 			<div style="position:fixed;min-height:40px;bottom:0px;left:0px;background-color:#dedede;width:100%;font-size:13px;font-weight:bold">
 				<div class="text-center" style="padding:5px;margin:5px;vertical-align:middle;height:100%">
-					<span style="color:#558855" ng-show="results > 0">{{results}} Ergebnisse</span>
-					<span style="color:#558855" ng-show="registrations > 0">{{registrations}} Anmeldungen</span>
+					<button class="btn pull-left" ui-sref="importResults" ng-show="showBackButton">
+						<i class="fa fa-chevron-left fa-2x" aria-hidden="true"></i>
+					</button>
+					<button class="btn" ng-show="results > 0 && registrations > 0"><i class="fa fa-share-square-o" aria-hidden="true"></i> Exportieren</button>
 				</div>
 			</div>
 	</body>

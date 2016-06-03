@@ -1,6 +1,3 @@
-<div style="position:fixed;top:0px;left:0px;min-height:40px;width:100%">
-  <button class="btn btn-primary" style="margin:10px" ui-sref="importResults">Zurück</button>
-</div>
 <div class="flexcontainer" style="margin-top:20px">
   <div class="row" style="text-align:center" class="import">
       <p><i class="fa fa-files-o fa-4x" style="color:#333743" aria-hidden="true"></i></p>
@@ -9,8 +6,42 @@
       </button>
   </div>
 </div>
-<div class="row" ng-show="tucanFilesData.length > 0">
-  <div class="col-xs-12">
+<div class="row" ng-show="registrations.length > 0" style="margin-top:10px">
+  <div class="col-xs-12 text-center" style="color:#992233">
     {{registrations.length}} Datei(en) importiert
+  </div>
+</div>
+<div class="row" ng-show="stats" style="margin-top:20px">
+  <div class="col-xs-6">
+    <table class="table tabled-condensed">
+      <tr>
+        <th>Angemeldet</th>
+        <th>{{stats.grade[0].length + stats.grade[1].length}}</th>
+      </tr>
+      <tr>
+        <td>mit Ergebnis</td>
+        <td>{{stats.grade[0].length}}</td>
+      </tr>
+      <tr>
+        <td>ohne Ergebnis</td>
+        <td>{{stats.grade[1].length}}</td>
+      </tr>
+    </table>
+  </div>
+  <div class="col-xs-6">
+    <table class="table tabled-condensed">
+      <tr>
+        <th>Ergebnisse</th>
+        <th>{{stats.registrated[0].length + stats.registrated[1].length}}</th>
+      </tr>
+      <tr>
+        <td>mit Anmeldung </td>
+        <td>{{stats.registrated[0].length}}</td>
+      </tr>
+      <tr>
+        <td>ohne Anmeldung</td>
+        <td>{{stats.registrated[1].length}}</td>
+      </tr>
+    </table>
   </div>
 </div>
