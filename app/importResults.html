@@ -1,28 +1,83 @@
 <div class="flex-item">
-  <div class="container">
-    <div class="row">
-      <div class="col-xs-4">
-        <p><i class="fa fa-file-text-o fa-4x" aria-hidden="true"></i></p>
-        <button class="btn" ng-class="results.data.length > 0 ? 'btn-success' : 'btn-danger'" ng-click="openFile()">
-          Testergebnisse importieren
-        </button>
+      <div ng-show="currentStep === 1">
+        <div class="text-center">
+              <p><i class="fa fa-file-text-o fa-4x" aria-hidden="true"></i></p>
+              <button class="btn" ng-class="results.data.length > 0 ? 'btn-success' : 'btn-danger'" ng-click="openFile()">
+                Prüfungsergebnisse importieren
+              </button>
+        </div>
+        <div class="infotext">
+              Importieren Sie Ihre Prüfungsergebnisliste. Diese muss als CSV-Datei vorliegen.
+        </div>
       </div>
-      <div class="col-xs-4">
-        <p><i class="fa fa-files-o fa-4x" aria-hidden="true"></i></p>
-        <button class="btn" ng-class="registrations.length > 0 ? 'btn-success' : 'btn-danger'" ng-click="openFiles()">
-          Tucan Datei(en) importieren
-        </button>
+      <div ng-show="currentStep === 2">
+        <div class="text-center">
+              <p><i class="fa fa-files-o fa-4x" aria-hidden="true"></i></p>
+              <button class="btn" ng-class="registrations.length > 0 ? 'btn-success' : 'btn-danger'" ng-click="openFiles()">
+                    Tucan Datei(en) importieren
+              </button>
+        </div>
+        <div class="infotext">
+              Importieren Sie die aus TUCaN exportierten Prüfungsanmeldeliste. Der Import mehrerer Listen ist ebenfalls möglich. Diese müssen als TXT-Datei vorliegen.
+        </div>
       </div>
-      <div class="col-xs-4 text-center">
-        <p><i class="fa fa-share-square-o fa-4x" aria-hidden="true"></i></p>
-        <button class="btn btn-danger" ng-disabled="!registrations.length > 0 && results.data.length > 0" ng-click="export()">
-          Dateien Exportieren
-        </button>
+      <div ng-show="currentStep === 3">
+        <div class="text-center">
+             <p><i class="fa fa-share-square-o fa-4x" aria-hidden="true"></i></p>
+             <button class="btn btn-danger" ng-disabled="!registrations.length > 0 && results.data.length > 0" ng-click="export()">
+                   Dateien Exportieren
+             </button>
+        </div>
+        <div class="infotext">
+              Es
+              <span ng-if="registrations.length === 1">kann eine</span>
+              <span ng-if="registrations.length > 1">können {{registrations.length}}</span>
+
+              Liste<span ng-if="registrations.length > 1">n</span>
+              exportiert werden. Diese <span ng-if="registrations.length === 1">kann</span>
+              <span ng-if="registrations.length > 1">können</span>
+              direkt in TUCaN importiert werden.
+        </div>
+        <div class="alert alert-danger" style="margin-top:20px">
+             <p>
+                   Für folgende Studierenden aus der Prüfungsergebnisliste existieren keine Anmeldungen in TUCaN.
+             </p>
+             <div style="width:100%;overflow:auto;min-heigth:400px;margin-top:10px">
+                   <table class="table table-condensed">
+                        <tr ng-repeat="w in warnings">
+                              <td ng-repeat="f in w">{{f}}</td>
+                        </tr>
+                   </table>
+            </div>
+        </div>
       </div>
-    </div>
-    <div class="row" style="min-height:300px">
-      <div class="col-xs-4 text-center">
-        <div ng-show="results.data.length > 0" style="margin-top:10px">
+</div>
+<div class="flex-item text-center" style="color:#666666">
+      <div class="row bs-wizard" style="border-bottom:0;">
+          <div class="col-xs-4 bs-wizard-step" ng-class="{'active' : currentStep === 1, 'complete' : currentStep > 1}">
+            <div class="text-center bs-wizard-stepnum">&nbsp;</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <a href="#" class="bs-wizard-dot" ng-click="backToStep(1)"></a>
+                  <div class="bs-wizard-info text-center">Prüfungsergebnisse</div>
+            </div>
+            <div class="col-xs-4 bs-wizard-step disabled" ng-class="{'active' : currentStep === 2, 'complete' : currentStep > 2, 'disabled' : currentStep < 2}"><!-- complete -->
+                  <div class="text-center bs-wizard-stepnum">&nbsp;</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <a href="#" class="bs-wizard-dot" ng-click="backToStep(2)"></a>
+                  <div class="bs-wizard-info text-center">TUCaN Dateien</div>
+            </div>
+            <div class="col-xs-4 bs-wizard-step disabled" ng-class="{'active' : currentStep === 3, 'complete' : currentStep > 3, 'disabled' : currentStep < 3}"><!-- complete -->
+                  <div class="text-center bs-wizard-stepnum">&nbsp;</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <a href="#" class="bs-wizard-dot"></a>
+                  <div class="bs-wizard-info text-center">Export</div>
+            </div>
+      </div>
+</div>
+
+    <!-- <div class="row" style="min-height:300px">
+      <div class="col-xs-4 text-center" ng-show="currentStep() === 1">
+        <div style="margin-top:10px">
           <div class="row" style="margin-top:20px">
             <div class="col-xs-12 text-center">
               <ol class="nya-bs-select" ng-model="results.col1">
@@ -44,11 +99,11 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="col-xs-4 text-center">
+      </div> -->
+      <!-- <div class="col-xs-4 text-center" ng-show="currentStep() === 2">
         <span ng-show="registrations.length > 0">{{registrations.length}} Tucan Datei(en) importiert</span>
       </div>
-      <div class="col-xs-4 text-center">
+      <div class="col-xs-4 text-center" ng-show="currentStep() === 3">
         <div class="row" ng-show="stats" style="margin-top:20px">
           <div class="col-xs-12">
             <h4>Angemeldet ({{stats.grade[0].length + stats.grade[1].length}})</h4>
@@ -77,6 +132,4 @@
             </table>
           </div>
       </div>
-    </div>
-  </div>
-</div>
+    </div> -->

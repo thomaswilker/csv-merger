@@ -14,13 +14,16 @@ body {
    -webkit-justify-content: center;
    justify-content: center;
    position:absolute;
+   flex-direction: column;
 }
 
 .flex-item {
-   margin:30px;
-   text-align:center
+   width:50%;
 }
 
-.flex-item .col-xs-4 {
-   padding-left:20px
+.infotext {
+   padding:8px;
+   margin-top: 10px;
+   border:1px solid #666;
+   border-radius: 4px;
 }
