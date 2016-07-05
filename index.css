@@ -4,6 +4,28 @@ body {
 	font-family: -apple-system, 'Helvetica Neue', Helvetica, sans-serif;
 }
 
+.btn-merge {
+   background-color: #AFCC50;
+   border-color: #AFbb50;
+   color:white
+}
+
+.flexcontainer .btn-merge:hover {
+   background-color: #AFbb50;
+   border-color: #AFbb50;
+   color:white
+}
+
+.btn-merge,
+.btn-merge:hover,
+.btn-merge:active,
+.btn-merge:visited,
+.btn-merge:focus {
+    color:white
+}
+
+
+
 .flexcontainer {
    display: -webkit-flex;
    display: flex;
@@ -11,19 +33,25 @@ body {
    align-items: center;
    height:100%;
    width:100%;
-   -webkit-justify-content: center;
-   justify-content: center;
+   -webkit-justify-content: flex-item;
+   justify-content: flex-start;
    position:absolute;
    flex-direction: column;
 }
 
 .flex-item {
    width:50%;
+   max-width:600px;
+   min-width:600px;
 }
 
-.infotext {
-   padding:8px;
+.flex-item:first-child{
+   margin-top:50px;
+}
+
+.alert.infotext {
    margin-top: 10px;
-   border:1px solid #666;
-   border-radius: 4px;
+   border:1px solid #c0c0c0;
+   background-color: #f1f1f1;
+   color: #333
 }

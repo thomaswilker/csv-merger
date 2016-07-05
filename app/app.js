@@ -18,8 +18,9 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
 .service('csvService', function($rootScope, _) {
 
   var fields = {
-    results : { col1 : 0, col2 : 1, data : [] },
-    registrations : []
+    results : [],
+    registrations : [],
+    columns : { col1 : null, col2 : null }
   };
 
   this.value = (f, v) => {
@@ -33,9 +34,11 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
   function merge() {
 
     var results = fields.results;
-    var resultsMap = results.data.slice(1).reduce((o,c) => {
-      if(c && c[results.col1]) {
-        o[c[results.col1]] = { grade : c[results.col2], data : c };
+    var columns = fields.columns;
+
+    var resultsMap = results.slice(1).reduce((o,c) => {
+      if(c && c[columns.col1]) {
+        o[c[columns.col1]] = { grade : c[columns.col2], data : c };
       }
       return o;
     }, {});
@@ -70,7 +73,7 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
     var partByGrade = _.partition(elements, r => r.grade && r.grade !== 'x');
     var partByRegistration = _.partition(_.keys(resultsMap), r => _.map(elements, e => e.matrnr).indexOf(r) > -1);
 
-    var stats = { grade : partByGrade, registrated : partByRegistration, registrations : registrations, results : resultsMap, data : fields.results.data };
+    var stats = { grade : partByGrade, registrated : partByRegistration, registrations : registrations, results : resultsMap, data : fields.results };
     return stats;
 
   };
@@ -113,6 +116,9 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
 
   var results = 'results';
   var registrations = 'registrations';
+  var columns = 'columns';
+
+
 
   $scope.results = csvService.value(results);
   csvService.observeField($scope, results);
@@ -120,40 +126,56 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
   $scope.registrations = csvService.value(registrations);
   csvService.observeField($scope, registrations);
 
+  $scope.columns = csvService.value(columns);
+  csvService.observeField($scope, columns);
+
+
   $scope.currentStep = 1;
 
   var currentStep = () =>  {
     var step = 1;
-    if($scope.results.data.length > 0)
+    if($scope.results.length > 0)
       step = 2;
-    if($scope.registrations.length > 0)
+    if(step === 2 && $scope.columns.col1 && $scope.columns.col2)
       step = 3;
+    if(step === 3 && $scope.registrations.length > 0)
+      step = 4;
     return step;
   };
 
   $scope.backToStep = (step) => {
-    if(step < 3) {
+    if(step < 4) {
       csvService.value(registrations, []);
     }
+    if(step < 3) {
+      csvService.value(columns, { col1 : 0, col2 : 1 });
+    }
     if(step < 2) {
-      csvService.value(results, { col1 : 0, col2 : 1, data : [] });
+      csvService.value(results, []);
     }
   };
 
-  $scope.$watch(() => [$scope.registrations, $scope.results], (nv, ov) => {
-    if($scope.results.data.length > 0 || $scope.registrations.length > 0) {
+  $scope.selectColumns = () => {
+    csvService.value(columns, $scope.predictedColumns);
+  };
+
+  $scope.$watch(() => [$scope.registrations, $scope.results, $scope.columns], (nv, ov) => {
+    $scope.currentStep = currentStep();
+  }, true);
+
+  $scope.$watch('currentStep', (nv, ov) => {
+    if(nv && nv === 4) {
       var stats = csvService.stats();
+      console.log(stats);
       $scope.stats = stats
       $scope.warnings = stats.registrated[1].map(mnr => stats.results[mnr].data);
     }
+  });
 
-    $scope.currentStep = currentStep();
-
-  }, true);
 
   ipc.on(results, function(event, data) {
-    var file = { col1 : 2, col2 : 3, data : data};
-    csvService.value(results, file);
+    $scope.predictedColumns = { col1 : 2, col2 : 3};
+    csvService.value(results, data);
   });
 
   ipc.on(registrations, function(event, data) {
