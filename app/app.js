@@ -45,9 +45,9 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
 
     var registrations = fields.registrations;
     registrations.forEach((f,index) => f.slice(2).forEach(s => {
-      var grade = resultsMap[s[1]];
-      if(grade) {
-        s[5] =  grade;
+      var stud = resultsMap[s[1]];
+      if(stud) {
+        s[5] =  stud.grade;
       } else {
         s[6] = 'x';
       }
@@ -72,6 +72,10 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
 
     var partByGrade = _.partition(elements, r => r.grade && r.grade !== 'x');
     var partByRegistration = _.partition(_.keys(resultsMap), r => _.map(elements, e => e.matrnr).indexOf(r) > -1);
+
+    var numberCount = _.extend({}, _.fill(new Array(10), 0));
+    var sign = (m) => _.extend(numberCount, _.countBy(m));
+    registrations.filter(r => )
 
     var stats = { grade : partByGrade, registrated : partByRegistration, registrations : registrations, results : resultsMap, data : fields.results };
     return stats;
@@ -100,7 +104,7 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
   };
 
 })
-.controller('importResultsCtrl', function($scope, csvService) {
+.controller('importResultsCtrl', function($scope, csvService, _) {
 
   $scope.openFile = function() {
     ipc.send('open-klaus-file');
@@ -117,8 +121,6 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
   var results = 'results';
   var registrations = 'registrations';
   var columns = 'columns';
-
-
 
   $scope.results = csvService.value(results);
   csvService.observeField($scope, results);
@@ -166,15 +168,43 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
   $scope.$watch('currentStep', (nv, ov) => {
     if(nv && nv === 4) {
       var stats = csvService.stats();
-      console.log(stats);
-      $scope.stats = stats
       $scope.warnings = stats.registrated[1].map(mnr => stats.results[mnr].data);
     }
   });
 
+  function random(column, percentage) {
+    var size = Math.min(column.length, Math.floor(column.length * percentage));
+    return Array.from(Array(size).keys()).map(() => Math.floor(size * Math.random()));
+  }
+
+  var isRealNumber = (n) => !_.isNaN(n) && _.isNumber(n);
+
+  var isResult = (v) => {
+    var n = parseInt(v);
+    return  isRealNumber(n) && Math.floor(n).toString().length === 1;
+  };
+
+  var isMatriculationNumber = (v) => {
+    var n = parseInt(v);
+    console.log(v, isRealNumber(n));
+    return  isRealNumber(n) && v.length < 9 && v.length > 6;
+  };
+
+  var isPredictedColumn = (column, samples, pred) => _.every(random(column, samples).map(i => column[i]), pred);
+  var getPredictedColumn = (columns, samples, pred) => _.findIndex(columns, (column) => isPredictedColumn(column, samples, pred));
 
   ipc.on(results, function(event, data) {
-    $scope.predictedColumns = { col1 : 2, col2 : 3};
+
+    var rows = data.slice(1);
+    var columns = _.zipWith(...rows, (...args) => _.values(args));
+    var matriculationColumn = getPredictedColumn(columns, 0.5, isMatriculationNumber);
+    var resultColumn = getPredictedColumn(columns, 0.5, isResult);
+
+    $scope.predictedColumns = { col1 : matriculationColumn, col2 : resultColumn};
+
+    console.log(rows);
+
+    _.
     csvService.value(results, data);
   });
 
