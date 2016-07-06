@@ -44,6 +44,7 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
     }, {});
 
     var registrations = fields.registrations;
+
     registrations.forEach((f,index) => f.slice(2).forEach(s => {
       var stud = resultsMap[s[1]];
       if(stud) {
@@ -61,7 +62,7 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
   this.stats = () => {
 
     var merged = merge();
-    var resultsMap = merged.resultsMap;
+    var results = merged.resultsMap;
     var registrations = merged.registrations;
 
     var elements = _.chain(registrations)
@@ -71,13 +72,25 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
                     .value();
 
     var partByGrade = _.partition(elements, r => r.grade && r.grade !== 'x');
-    var partByRegistration = _.partition(_.keys(resultsMap), r => _.map(elements, e => e.matrnr).indexOf(r) > -1);
+    var partByRegistration = _.partition(_.keys(results), r => _.map(elements, e => e.matrnr).indexOf(r) > -1);
 
     var numberCount = _.extend({}, _.fill(new Array(10), 0));
     var sign = (m) => _.extend(numberCount, _.countBy(m));
-    registrations.filter(r => )
+    var x = _.chain(registrations)
+             .flatten()
+             .filter(r => r[6] === 'x')
+             .map(r => { return { sign : _.values(sign(r[1])).join(''), matrnr : r[1] }; })
+             .keyBy((r) => r.sign)
+             .value();
 
-    var stats = { grade : partByGrade, registrated : partByRegistration, registrations : registrations, results : resultsMap, data : fields.results };
+
+    // var a = '1201691';
+    // var b = '1301691';
+    // var x = _.sum(_.zipWith(a.split(''), b.split(''), (a,b) => a === b ? 0 : 1));
+    // console.log(x);
+
+    var warnings = partByRegistration[1].map(mnr => results[mnr].data);
+    var stats = { grades : partByGrade, registrated : partByRegistration, registrations : registrations, results : results, data : fields.results, warnings : warnings };
     return stats;
 
   };
@@ -168,7 +181,7 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
   $scope.$watch('currentStep', (nv, ov) => {
     if(nv && nv === 4) {
       var stats = csvService.stats();
-      $scope.warnings = stats.registrated[1].map(mnr => stats.results[mnr].data);
+      $scope.warnings = stats.warnings;
     }
   });
 
@@ -201,14 +214,12 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
     var resultColumn = getPredictedColumn(columns, 0.5, isResult);
 
     $scope.predictedColumns = { col1 : matriculationColumn, col2 : resultColumn};
-
-    console.log(rows);
-
-    _.
     csvService.value(results, data);
+
   });
 
   ipc.on(registrations, function(event, data) {
+    console.log(data);
     csvService.value(registrations, data);
   });
 
