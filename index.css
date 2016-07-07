@@ -10,9 +10,21 @@ body {
    color:white
 }
 
+.btn-close {
+   background-color: #c9308e;
+   border-color: #c8206a;
+   color:white
+}
+
 .flexcontainer .btn-merge:hover {
    background-color: #AFbb50;
    border-color: #AFbb50;
+   color:white
+}
+
+.flexcontainer .btn-close:hover {
+   background-color: #c8206a;
+   border-color: #c8206a;
    color:white
 }
 
@@ -24,7 +36,17 @@ body {
     color:white
 }
 
+.btn-close,
+.btn-close:hover,
+.btn-close:active,
+.btn-close:visited,
+.btn-close:focus {
+    color:white
+}
 
+ol.nya-bs-select .btn {
+   padding: 1px 5px 1px 5px;
+}
 
 .flexcontainer {
    display: -webkit-flex;

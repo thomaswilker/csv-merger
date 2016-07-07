@@ -17,6 +17,7 @@ let mainWindow;
 function onClosed() {
 	// dereference the window
 	// for multiple windows store them in an array
+	console.log('close');
 	mainWindow = null;
 }
 
@@ -100,14 +101,25 @@ ipc.on('export', function(event, data) {
 	    if (files && files.length === 1) {
 				console.log('export', data);
 				var dir = files[0];
+				var errors = [];
 				data.forEach((f,index) => {
 					stringify(f, {delimiter : '\t'}, function(err, data) {
 						var name = dir + '/tucan-' + index + '.txt';
 						fs.writeFile(name, data, 'utf8', (err) => {
-							console.log(err);
+							if(err) {
+								errors.push(err);
+							}
 						});
 					});
 				});
+
+				console.log('errors', errors);
+				if(errors.length > 0) {
+					mainWindow.webContents.send('exportError', err);
+				} else {
+					console.log('export success');
+					mainWindow.webContents.send('exportSuccess', {dir : dir, numberOfFiles : data.length});
+				}
 			}
 		})
 	}

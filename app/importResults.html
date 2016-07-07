@@ -74,14 +74,33 @@
               <span ng-if="registrations.length > 1">können</span>
               direkt in TUCaN importiert werden.
         </div>
-        <div class="alert alert-danger" style="margin-top:20px" ng-show="warnings.length > 0">
+        <div class="alert alert-info infotext" style="margin-top:20px" ng-show="warnings.length > 0">
              <p>
+                   <i class="fa fa-exclamation-circle" style="color:#c9308e" aria-hidden="true"></i>
                    Für folgende Studierenden aus der Prüfungsergebnisliste existieren keine Anmeldungen in TUCaN.
+
              </p>
-             <div style="width:100%;overflow:auto;min-heigth:400px;margin-top:10px">
-                   <table class="table table-condensed">
-                        <tr ng-repeat="w in warnings">
-                              <td ng-repeat="f in w">{{f}}</td>
+             <div style="width:100%;overflow:auto;max-height:500px;margin-top:20px;background-color:#f1f1f1">
+                   <table class="table table-condensed" style="padding-bottom:20px;margin-bottom:45px">
+                        <thead>
+                              <tr>
+                                    <th class="text-center">Prüfungsergebnis</th>
+                                    <th class="text-center">Matrikelnummer</th>
+                                    <th>Alternativen</th>
+                              </tr>
+                        </thead>
+                        <tr ng-repeat="w in warnings | orderBy:'-similar.length'">
+                              <td class="text-center">{{w.data[columns.col2]}}</td>
+                              <td class="text-center">{{w.data[columns.col1]}}</td>
+                              <td ng-show="w.similar.length > 0">
+                                    <ol class="nya-bs-select" ng-model="w.selected" ng-show="w.similar.length > 1" style="width:150px">
+                                          <li nya-bs-option="matrnr in w.similar" data-value="matrnr">
+                                               <a>{{matrnr}}</a>
+                                          </li>
+                                    </ol>
+                                    <span ng-show="w.similar.length === 1" ng-model="w.selected">{{w.similar[0]}}</span>
+                                    <button class="btn btn-default" ng-click="changeMatrnr(w.data[columns.col1], w.selected)" style="float:right;margin-left:10px;padding: 1px 5px 1px 5px;width:120px;">Übernehmen</button>
+                              </td>
                         </tr>
                    </table>
             </div>
@@ -116,3 +135,18 @@
             </div>
       </div>
 </div>
+<script type="text/ng-template" id="modal.html">
+      <div class="modal-header">
+                  <h3 class="modal-title">Export</h3>
+      </div>
+      <div class="modal-body">
+                  <div ng-show="success">
+                        Es wurden {{data.numberOfFiles}} Dateien erfolgreich exportiert.
+                        Die Dateien sind unter folgendem Pfad zu finden: {{data.dir}}.
+                  </div>
+      </div>
+      <div class="modal-footer">
+                  <button class="btn btn-merge" type="button" ng-click="ok()">Weitere Ergebnisliste importieren</button>
+                  <button class="btn btn-close" type="button" ng-click="cancel()">Programm verlassen</button>
+      </div>
+</script>

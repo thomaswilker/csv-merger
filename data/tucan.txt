@@ -11,6 +11,6 @@ Prüfungsnummer	Matrikelnummer	Vorname	Mittelname	Name	Noten	Abwesend (x)
 	50429587	Jan-Niklaas		Neureither		
 	36905426	Shu Min		Özay		
 	35692418	Yuhong		Schneeweiß		
-	41613445	Christin Kerstin		Spencer		
-	85823141	Hussien		Terra		
-	25637992	Eugenie		Willemsen		
+	12016819	Christin Kerstin		Spencer		
+	12106919	Zak		Mc Cracken		
+	12345679	Walter		Wurm		

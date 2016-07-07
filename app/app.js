@@ -1,4 +1,4 @@
-angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
+angular.module('csvMerger', ['ui.router','nya.bootstrap.select', 'ui.bootstrap'])
 .run(function() {
   console.log('run');
 })
@@ -49,7 +49,9 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
       var stud = resultsMap[s[1]];
       if(stud) {
         s[5] =  stud.grade;
+        s[6] =  null;
       } else {
+        s[5] =  null;
         s[6] = 'x';
       }
     }));
@@ -74,22 +76,39 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
     var partByGrade = _.partition(elements, r => r.grade && r.grade !== 'x');
     var partByRegistration = _.partition(_.keys(results), r => _.map(elements, e => e.matrnr).indexOf(r) > -1);
 
-    var numberCount = _.extend({}, _.fill(new Array(10), 0));
-    var sign = (m) => _.extend(numberCount, _.countBy(m));
-    var x = _.chain(registrations)
+    var numberCount = () => _.extend({}, _.fill(new Array(10), 0));
+    var sign = (m) => _.values(_.extend(numberCount(), _.countBy(m))).join('');
+
+    // Signs all registered students which have no result
+    var regStudsWithoutResult = _.chain(registrations)
              .flatten()
              .filter(r => r[6] === 'x')
-             .map(r => { return { sign : _.values(sign(r[1])).join(''), matrnr : r[1] }; })
-             .keyBy((r) => r.sign)
+             .map(r => { return { sign : sign(r[1]), matrnr : r[1] }; })
              .value();
 
+    var signMap = _.reduce(regStudsWithoutResult, (o, c) => {
+      if(!o[c.sign]) o[c.sign] = [c.matrnr];
+      else o[c.sign].push[c.matrnr];
+      return o;
+    }, {});
 
-    // var a = '1201691';
-    // var b = '1301691';
-    // var x = _.sum(_.zipWith(a.split(''), b.split(''), (a,b) => a === b ? 0 : 1));
-    // console.log(x);
+    var matrnrs = _.map(regStudsWithoutResult, 'matrnr');
 
-    var warnings = partByRegistration[1].map(mnr => results[mnr].data);
+    function diffChars(a,b, limit = 1) {
+      for(let i=0;i<a.length && limit >= 0;i++)
+        limit -= a.charAt(i) === b.charAt(i) ? 0 : 1;
+      return limit;
+    }
+
+    var warnings = partByRegistration[1].map(mnr => {
+      var w = {};
+      w.data = results[mnr].data;
+      w.similar = matrnrs.filter((m) => diffChars(mnr,m) > -1);
+      w.similar = _.compact(w.similar.concat(signMap[sign(mnr)]));
+      w.selected = 1;
+      return w;
+    });
+
     var stats = { grades : partByGrade, registrated : partByRegistration, registrations : registrations, results : results, data : fields.results, warnings : warnings };
     return stats;
 
@@ -117,7 +136,7 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
   };
 
 })
-.controller('importResultsCtrl', function($scope, csvService, _) {
+.controller('importResultsCtrl', function($scope, csvService, _, $uibModal) {
 
   $scope.openFile = function() {
     ipc.send('open-klaus-file');
@@ -144,6 +163,12 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
   $scope.columns = csvService.value(columns);
   csvService.observeField($scope, columns);
 
+  $scope.changeMatrnr = function(ov, nv) {
+    let col = $scope.columns.col1;
+    let i = _.findIndex($scope.results, (r) => r[col] === ov);
+    $scope.results[i][col] = nv;
+    csvService.value(results, $scope.results);
+  };
 
   $scope.currentStep = 1;
 
@@ -176,6 +201,8 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
 
   $scope.$watch(() => [$scope.registrations, $scope.results, $scope.columns], (nv, ov) => {
     $scope.currentStep = currentStep();
+    var stats = csvService.stats();
+    $scope.warnings = stats.warnings;
   }, true);
 
   $scope.$watch('currentStep', (nv, ov) => {
@@ -183,7 +210,7 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
       var stats = csvService.stats();
       $scope.warnings = stats.warnings;
     }
-  });
+  }, true);
 
   function random(column, percentage) {
     var size = Math.min(column.length, Math.floor(column.length * percentage));
@@ -199,7 +226,6 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
 
   var isMatriculationNumber = (v) => {
     var n = parseInt(v);
-    console.log(v, isRealNumber(n));
     return  isRealNumber(n) && v.length < 9 && v.length > 6;
   };
 
@@ -219,8 +245,51 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select'])
   });
 
   ipc.on(registrations, function(event, data) {
-    console.log(data);
     csvService.value(registrations, data);
   });
 
+  ipc.on('exportSuccess', function(event, data) {
+
+    console.log('success');
+    var success = true;
+
+    var modalInstance = $uibModal.open({
+        animation: false,
+        templateUrl: 'modal.html',
+        controller: 'ModalCtrl',
+        size: 'lg',
+        resolve : {
+          success : function() {
+            return success;
+          },
+          data : function() {
+            return data;
+          }
+        }
+    });
+
+    modalInstance.result.then(function () {
+      $scope.backToStep(1);
+    }, function () {});
+  });
+
+})
+.controller('ModalCtrl', function($scope, $uibModalInstance, success, data) {
+
+    const remote = require('electron').remote;
+
+    $scope.data = data;
+    $scope.success = success;
+
+    $scope.ok = function () {
+      console.log('ok');
+      $uibModalInstance.close();
+    };
+
+    $scope.cancel = function () {
+      console.log('close');
+      $uibModalInstance.dismiss('cancel');
+      var window = remote.getCurrentWindow();
+      window.close();
+    };
 });
