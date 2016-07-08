@@ -139,7 +139,7 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select', 'ui.bootstrap']
 .controller('importResultsCtrl', function($scope, csvService, _, $uibModal) {
 
   $scope.openFile = function() {
-    ipc.send('open-klaus-file');
+    ipc.send('open-result-file');
   };
 
   $scope.openFiles = function() {

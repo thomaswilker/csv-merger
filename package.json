@@ -22,7 +22,9 @@
   "dependencies": {
     "csv": "^1.1.0",
     "electron-debug": "^1.0.0",
-    "q": "^1.4.1"
+    "fast-csv": "^2.0.0",
+    "q": "^1.4.1",
+    "to-utf-8": "^1.2.0"
   },
   "devDependencies": {
     "devtron": "^1.1.0",

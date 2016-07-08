@@ -2,9 +2,11 @@
 const electron = require('electron');
 const app = electron.app;
 const csv = require('csv');
+const detect = require('detect-csv');
 const fs = require('fs');
 const $q = require('q');
 var stringify = require('csv-stringify');
+const encoding = require('encoding');
 
 // adds debug features like hotkeys for triggering dev tools and reload
 require('electron-debug')();
@@ -24,7 +26,7 @@ function onClosed() {
 function createMainWindow() {
 	const win = new electron.BrowserWindow({
 		width: 800,
-		height: 600
+		height: 700
 	});
 
 	win.loadURL(`file://${__dirname}/index.html`);
@@ -54,39 +56,44 @@ function parseCsv(data, options) {
 	return asPromise(d => csv.parse(data, options, defaultResolver(d)));
 }
 
-
-function readTucanFile(path) {
-	return readFile(path).then(data => parseCsv(data, {delimiter : '\t'}))
+function getDelimiter(csvData) {
+	var csv = detect(csvData);
+	return {delimiter : csv.delimiter};
 }
 
-function readKlausFile(path) {
-	return readFile(path).then(data => parseCsv(data, {delimiter : ';'}))
-}
+function readCsvFile(path, enc) {
+	return readFile(path).then(data => {
 
-var tucanFiles = [];
-var klausFile = {};
+		if(enc) {
+			data = encoding.convert(data, 'utf8', enc);
+		}
+
+		return parseCsv(data, getDelimiter(data))
+	});
+}
 
 ipc.on('open-tucan-files', function (event) {
 	dialog.showOpenDialog({
     properties: ['openFiles', 'multiSelections']
   }, function (files) {
     if (files) {
-			$q.allSettled(files.map(file => readTucanFile(file))).spread(function() {
-				tucanFiles = Object.keys(arguments).map(k => arguments[k].value);
-				mainWindow.webContents.send('registrations', tucanFiles);
+			$q.allSettled(files.map(file => readCsvFile(file, 'windows1252'))).spread(function() {
+				var result = Object.keys(arguments).map(k => arguments[k].value);
+				mainWindow.webContents.send('registrations', result);
 			});
 		}
 	})
 })
 
-ipc.on('open-klaus-file', function (event) {
+ipc.on('open-result-file', function (event) {
 	dialog.showOpenDialog({
     properties: ['openFiles']
   }, function (files) {
     if (files && files.length === 1) {
-			readKlausFile(files[0]).then(a => {
-				klausFile = a;
-				mainWindow.webContents.send('results', a);
+
+			readCsvFile(files[0]).then(r => {
+				console.log(r);
+				mainWindow.webContents.send('results', r);
 			});
 		}
 	})
@@ -99,13 +106,14 @@ ipc.on('export', function(event, data) {
 	    properties: ['openFiles', 'openDirectory']
 	  }, function (files) {
 	    if (files && files.length === 1) {
-				console.log('export', data);
 				var dir = files[0];
 				var errors = [];
 				data.forEach((f,index) => {
 					stringify(f, {delimiter : '\t'}, function(err, data) {
+
 						var name = dir + '/tucan-' + index + '.txt';
-						fs.writeFile(name, data, 'utf8', (err) => {
+						data = encoding.convert(data, 'windows1252', 'utf8');
+						fs.writeFile(name, data, (err) => {
 							if(err) {
 								errors.push(err);
 							}
@@ -113,7 +121,6 @@ ipc.on('export', function(event, data) {
 					});
 				});
 
-				console.log('errors', errors);
 				if(errors.length > 0) {
 					mainWindow.webContents.send('exportError', err);
 				} else {

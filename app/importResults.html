@@ -1,3 +1,6 @@
+<div style="align-self:flex-end">
+      <img src="./assets/img/tu_darmstadt_web.png"/>
+</div>
 <div class="flex-item">
       <div ng-show="currentStep === 1">
         <div class="text-center">
@@ -14,7 +17,7 @@
        <div class="text-center">
               <p><i class="fa fa-columns fa-4x" aria-hidden="true"></i></p>
               <button class="btn btn-merge" ng-click="selectColumns()">
-                    Spalten wählen
+                    Spalten bestätigen
               </button>
        </div>
        <div class="alert alert-info infotext">
@@ -54,7 +57,7 @@
               </button>
         </div>
         <div class="alert alert-info infotext">
-              Importieren Sie die aus TUCaN exportierten Prüfungsanmeldeliste. Der Import mehrerer Listen ist ebenfalls möglich. Diese müssen als TXT-Datei vorliegen.
+              Importieren Sie die aus TUCaN exportierte Prüfungsanmeldeliste. Der Import mehrerer Listen ist ebenfalls möglich.
         </div>
       </div>
       <div ng-show="currentStep === 4">
@@ -119,7 +122,7 @@
                   <div class="text-center bs-wizard-stepnum">&nbsp;</div>
                   <div class="progress"><div class="progress-bar"></div></div>
                   <a href="#" class="bs-wizard-dot" ng-click="backToStep(2)"></a>
-                  <div class="bs-wizard-info text-center">Spalten wählen</div>
+                  <div class="bs-wizard-info text-center">Spalten bestätigen</div>
             </div>
             <div class="col-xs-3 bs-wizard-step disabled" ng-class="{'active' : currentStep === 3, 'complete' : currentStep > 3, 'disabled' : currentStep < 3}"><!-- complete -->
                   <div class="text-center bs-wizard-stepnum">&nbsp;</div>
@@ -141,12 +144,14 @@
       </div>
       <div class="modal-body">
                   <div ng-show="success">
-                        Es wurden {{data.numberOfFiles}} Dateien erfolgreich exportiert.
-                        Die Dateien sind unter folgendem Pfad zu finden: {{data.dir}}.
+                        Es <span ng-show="data.numberOfFiles === 1">wurde eine Datei</span>
+                        <span>wurden {{data.numberOfFiles}} Dateien</span>
+                        erfolgreich exportiert.<br>
+                        Die exportierten Ergebnisse sind in folgendem Pfad zu finden: {{data.dir}}
                   </div>
       </div>
       <div class="modal-footer">
-                  <button class="btn btn-merge" type="button" ng-click="ok()">Weitere Ergebnisliste importieren</button>
+                  <button class="btn btn-merge" type="button" ng-click="ok()">Neue Prüfungsergebnisliste importieren</button>
                   <button class="btn btn-close" type="button" ng-click="cancel()">Programm verlassen</button>
       </div>
 </script>
