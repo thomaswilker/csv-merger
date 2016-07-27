@@ -29,7 +29,7 @@
                    </div>
                    <div class="col-xs-5">
                         <ol class="nya-bs-select" ng-model="predictedColumns.col1">
-                               <li nya-bs-option="(i,option) in results[0]" data-value="i">
+                               <li nya-bs-option="(i,option) in results[0] track by $index" data-value="i">
                                     <a>{{option}}</a>
                                </li>
                         </ol>
@@ -41,7 +41,7 @@
                   </div>
                   <div class="col-xs-5">
                         <ol class="nya-bs-select" ng-model="predictedColumns.col2">
-                              <li nya-bs-option="(i,option) in results[0]" data-value="i">
+                              <li nya-bs-option="(i,option) in results[0] track by $index" data-value="i">
                                    <a>{{option}}</a>
                               </li>
                        </ol>
@@ -53,7 +53,7 @@
         <div class="text-center">
               <p><i class="fa fa-files-o fa-4x" aria-hidden="true"></i></p>
               <button class="btn btn-merge" ng-click="openFiles()">
-                    Tucan Datei(en) importieren
+                    TUCaN Datei(en) importieren
               </button>
         </div>
         <div class="alert alert-info infotext">
@@ -80,8 +80,15 @@
         <div class="alert alert-info infotext" style="margin-top:20px" ng-show="warnings.length > 0">
              <p>
                    <i class="fa fa-exclamation-circle" style="color:#c9308e" aria-hidden="true"></i>
-                   Für folgende Studierenden aus der Prüfungsergebnisliste existieren keine Anmeldungen in TUCaN.
-
+                   <strong>Für folgende Studierende aus der Prüfungsergebnisliste existieren keine Anmeldungen in TUCaN.</strong><br>
+                   <p>Entweder haben die Studierenden die Prüfung ohne Anmeldung abgelegt oder es hat sich ein Fehler in der Prüfungsergebnisliste eingeschlichen.</p>
+                   <p>Falls Anmeldungen mit einer sehr ähnlichen Matrikelnummer in der TUCaN-Anmeldeliste existieren und
+                   für diese kein Prüfungsergebnis vorliegt, werden sie als Alternativen angezeigt.
+                   Sie können dann entscheiden, ob es sich bei dem/der Studierenden aus der Prüfungsergebnisliste
+                   um die entsprechende Person aus der TUCaN-Anmeldeliste handelt oder nicht. </p>
+                   <p>
+                   Es werden nur Prüfungsergebnisse von angemeldeten Studierenden beim Export berücksichtigt.
+                   </p>
              </p>
              <div style="width:100%;overflow:auto;max-height:500px;margin-top:20px;background-color:#f1f1f1">
                    <table class="table table-condensed" style="padding-bottom:20px;margin-bottom:45px">
@@ -92,6 +99,7 @@
                                     <th>Alternativen</th>
                               </tr>
                         </thead>
+                        <tbody>
                         <tr ng-repeat="w in warnings | orderBy:'-similar.length'">
                               <td class="text-center">{{w.data[columns.col2]}}</td>
                               <td class="text-center">{{w.data[columns.col1]}}</td>
@@ -105,6 +113,7 @@
                                     <button class="btn btn-default" ng-click="changeMatrnr(w.data[columns.col1], w.selected)" style="float:right;margin-left:10px;padding: 1px 5px 1px 5px;width:120px;">Übernehmen</button>
                               </td>
                         </tr>
+                        </tbody>
                    </table>
             </div>
         </div>

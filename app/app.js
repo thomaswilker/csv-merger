@@ -104,7 +104,8 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select', 'ui.bootstrap']
       var w = {};
       w.data = results[mnr].data;
       w.similar = matrnrs.filter((m) => diffChars(mnr,m) > -1);
-      w.similar = _.compact(w.similar.concat(signMap[sign(mnr)]));
+      var switcher = (signMap[sign(mnr)] || []).filter(m => diffChars(mnr, m, 2) > -1);
+      w.similar = _.compact(w.similar.concat(switcher));
       w.selected = 1;
       return w;
     });
@@ -147,7 +148,8 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select', 'ui.bootstrap']
   };
 
   $scope.export = function() {
-    ipc.send('export', csvService.merge().registrations);
+	var merged = csvService.merge();
+    ipc.send('export', merged.registrations);
   };
 
   var results = 'results';
@@ -245,6 +247,7 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select', 'ui.bootstrap']
   });
 
   ipc.on(registrations, function(event, data) {
+    console.log('data', data);
     csvService.value(registrations, data);
   });
 

@@ -21,8 +21,9 @@
   ],
   "dependencies": {
     "csv": "^1.1.0",
+    "detect-csv": "^1.1.0",
     "electron-debug": "^1.0.0",
-    "fast-csv": "^2.0.0",
+    "encoding": "^0.1.12",
     "q": "^1.4.1",
     "to-utf-8": "^1.2.0"
   },

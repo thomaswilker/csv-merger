@@ -25,8 +25,8 @@ function onClosed() {
 
 function createMainWindow() {
 	const win = new electron.BrowserWindow({
-		width: 800,
-		height: 700
+		width: 850,
+		height: 850
 	});
 
 	win.loadURL(`file://${__dirname}/index.html`);
@@ -53,6 +53,8 @@ function readFile(path) {
 }
 
 function parseCsv(data, options) {
+
+	options.relax_column_count = true;
 	return asPromise(d => csv.parse(data, options, defaultResolver(d)));
 }
 
@@ -79,6 +81,7 @@ ipc.on('open-tucan-files', function (event) {
     if (files) {
 			$q.allSettled(files.map(file => readCsvFile(file, 'windows1252'))).spread(function() {
 				var result = Object.keys(arguments).map(k => arguments[k].value);
+				console.log('result', result);
 				mainWindow.webContents.send('registrations', result);
 			});
 		}
