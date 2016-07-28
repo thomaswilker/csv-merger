@@ -131,7 +131,6 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select', 'ui.bootstrap']
 
       scope.safeApply(() => {
           scope[field] = this.value(field);
-          console.log('apply');
       });
     });
   };
@@ -178,7 +177,7 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select', 'ui.bootstrap']
     var step = 1;
     if($scope.results.length > 0)
       step = 2;
-    if(step === 2 && $scope.columns.col1 && $scope.columns.col2)
+    if(step === 2 && $scope.columns.col1 != null && $scope.columns.col2 != null)
       step = 3;
     if(step === 3 && $scope.registrations.length > 0)
       step = 4;
@@ -190,7 +189,7 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select', 'ui.bootstrap']
       csvService.value(registrations, []);
     }
     if(step < 3) {
-      csvService.value(columns, { col1 : 0, col2 : 1 });
+      csvService.value(columns, { col1 : null, col2 : null });
     }
     if(step < 2) {
       csvService.value(results, []);
@@ -247,13 +246,11 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select', 'ui.bootstrap']
   });
 
   ipc.on(registrations, function(event, data) {
-    console.log('data', data);
     csvService.value(registrations, data);
   });
 
   ipc.on('exportSuccess', function(event, data) {
 
-    console.log('success');
     var success = true;
 
     var modalInstance = $uibModal.open({
