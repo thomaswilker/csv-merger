@@ -1,6 +1,0 @@
-"18-kn-1030"	"Praktikum Messtechnik"	"Studienleistung fakultativ"	""	"Mo, 18. Jul. 2016 18:00 20:15"
-"Prüfungsnummer"	"Matrikelnummer"	"Vorname"	"Mittelname"	"Name"	"Noten"	"Abwesend (x)"
-""	"2332970"	"Dahit"	""	"Güclü"
-""	"1669042"	"Philipp"	""	"Hatebur"
-""	"1098367"	"Andre"	""	"Marra"
-""	"2048989"	"Bayani"	""	"Puerta Castaneda"

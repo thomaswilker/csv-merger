@@ -1,3 +1,0 @@
-"18-wy-1030"	"Praktikum Messtechnik"	"fakultativ"	""	"Mo, 18. Jul. 2016 18:00 20:15"
-"Prüfungsnummer"	"Matrikelnummer"	"Vorname"	"Mittelname"	"Name"	"Noten"	"Abwesend (x)"
-""	"2589037"	"Yahia"	""	"Brini"
