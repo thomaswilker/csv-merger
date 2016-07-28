@@ -3,26 +3,12 @@ angular.module('csvMerger')
 
   this.results = [];
   this.registrations = [];
-  this.columns = [];
-  
-  var fields = {
-    results : [],
-    registrations : [],
-    columns : { col1 : null, col2 : null }
-  };
+  this.columns = {column1 : null, column2 : null};
 
-  this.value = (f, v) => {
-    if(v) {
-      fields[f] = v;
-      $rootScope.$broadcast(f, v);
-    }
-    else return fields[f];
-  };
+  this.merge = () => {
 
-  function merge() {
-
-    var results = fields.results;
-    var columns = fields.columns;
+    var results = this.results;
+    var columns = this.columns;
 
     var resultsMap = results.slice(1).reduce((o,c) => {
       if(c && c[columns.col1]) {
@@ -31,7 +17,7 @@ angular.module('csvMerger')
       return o;
     }, {});
 
-    var registrations = fields.registrations;
+    var registrations = this.registrations;
 
     registrations.forEach((f,index) => f.slice(2).forEach(s => {
       var stud = resultsMap[s[1]];
@@ -45,13 +31,11 @@ angular.module('csvMerger')
     }));
 
     return { resultsMap : resultsMap, registrations : registrations };
-  }
-
-  this.merge = () => merge();
+  };
 
   this.stats = () => {
 
-    var merged = merge();
+    var merged = this.merge();
     var results = merged.resultsMap;
     var registrations = merged.registrations;
 
@@ -98,29 +82,9 @@ angular.module('csvMerger')
       return w;
     });
 
-    var stats = { grades : partByGrade, registrated : partByRegistration, registrations : registrations, results : results, data : fields.results, warnings : warnings };
+    var stats = { grades : partByGrade, registrated : partByRegistration, registrations : registrations, results : results, data : results, warnings : warnings };
     return stats;
 
-  };
-
-  this.observeField = (scope, field) => {
-    scope.$on(field, (v) =>  {
-
-      scope.safeApply = function(fn) {
-        var phase = this.$root.$$phase;
-        if(phase == '$apply' || phase == '$digest') {
-          if(fn && (typeof(fn) === 'function')) {
-            fn();
-          }
-        } else {
-          this.$apply(fn);
-        }
-      };
-
-      scope.safeApply(() => {
-          scope[field] = this.value(field);
-      });
-    });
   };
 
 })

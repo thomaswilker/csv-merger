@@ -1,10 +1,10 @@
 angular.module('csvMerger', ['ui.router','nya.bootstrap.select', 'ui.bootstrap', 'rx'])
-.run(function(stepService) {
-  stepService.next(1);
+.run(function() {
+  console.log('run');
 })
 .config(function($stateProvider, $urlRouterProvider) {
 
-  $urlRouterProvider.otherwise('/');
+  $urlRouterProvider.otherwise('/step1');
 
   $stateProvider
     .state('app', {
@@ -37,13 +37,12 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select', 'ui.bootstrap',
 })
 .constant('_', window._)
 .controller('AppCtrl', function($scope, $state, stepService, _) {
+  $scope.currentStep = 1;
 
-  console.log($state);
-  
-  stepService.current.subscribe((step) => {
-    $scope.currentStep = step;
+  stepService.current().subscribe((step) => {
+    $scope.currentStep = parseInt(step.slice(step.length-1));
+    console.log($scope.currentStep);
   });
-  $scope.nextStep = (step) => stepService.next(step);
 
 
   // csvService.source().subscribe(x => console.log('start', x));

@@ -2,7 +2,7 @@ angular.module('csvMerger')
 .controller('ImportResultsCtrl', function($scope, $state, csvService, stepService) {
 
   $scope.openFile = () => ipc.send('open-result-file');
-  
+
   ipc.on('results', function(event, data) {
 
     function random(column, percentage) {
@@ -33,7 +33,7 @@ angular.module('csvMerger')
     // set predicted columns and resolved data
     csvService.columns = { col1 : matriculationColumn, col2 : resultColumn};
     csvService.results = data;
-    stepService.next(2);
+    $state.go('app.step2');
 
   });
 

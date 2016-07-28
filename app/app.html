@@ -4,30 +4,27 @@
 <div class="flex-item">
       <ui-view></ui-view>
 </div>
-<div>
-      {{currentStep}}
-</div>
 <div class="flex-item text-center" style="color:#666666">
       <div class="row bs-wizard" style="border-bottom:0">
-          <div class="col-xs-3 bs-wizard-step" ng-class="{'active' : currentStep === 1, 'complete' : currentStep > 1}">
+          <div class="col-xs-3 bs-wizard-step" ng-class="{'active' : currentStep == 1, 'complete' : currentStep > 1}">
             <div class="text-center bs-wizard-stepnum">&nbsp;</div>
                   <div class="progress"><div class="progress-bar"></div></div>
-                  <a href="#" class="bs-wizard-dot" ng-click="nextStep(1)"></a>
+                  <a href="#" class="bs-wizard-dot" ui-sref="app.step1" ui-sref-active="{state: 'app'}"></a>
                   <div class="bs-wizard-info text-center">Prüfungsergebnisse</div>
             </div>
-            <div class="col-xs-3 bs-wizard-step disabled" ng-class="{'active' : currentStep === 2, 'complete' : currentStep > 2, 'disabled' : currentStep < 2}"><!-- complete -->
+            <div class="col-xs-3 bs-wizard-step" ng-class="{'active' : currentStep == 2, 'complete' : currentStep > 2, 'disabled' : currentStep < 2}"><!-- complete -->
                   <div class="text-center bs-wizard-stepnum">&nbsp;</div>
                   <div class="progress"><div class="progress-bar"></div></div>
-                  <a href="#" class="bs-wizard-dot" ng-click="nextStep(2)"></a>
+                  <a href="#" class="bs-wizard-dot" ui-sref="app.step2" ui-sref-active="{state: 'app'}"></a>
                   <div class="bs-wizard-info text-center">Spalten bestätigen</div>
             </div>
-            <div class="col-xs-3 bs-wizard-step disabled" ng-class="{'active' : currentStep === 3, 'complete' : currentStep > 3, 'disabled' : currentStep < 3}"><!-- complete -->
+            <div class="col-xs-3 bs-wizard-step" ng-class="{'active' : currentStep == 3, 'complete' : currentStep > 3, 'disabled' : currentStep < 3}"><!-- complete -->
                   <div class="text-center bs-wizard-stepnum">&nbsp;</div>
                   <div class="progress"><div class="progress-bar"></div></div>
-                  <a href="#" class="bs-wizard-dot" ng-click="nextStep(3)"></a>
+                  <a href="#" class="bs-wizard-dot" ui-sref="app.step3" ui-sref-active="{state: 'app'}"></a>
                   <div class="bs-wizard-info text-center">TUCaN Dateien</div>
             </div>
-            <div class="col-xs-3 bs-wizard-step disabled" ng-class="{'active' : currentStep === 4, 'complete' : currentStep > 4, 'disabled' : currentStep < 4}"><!-- complete -->
+            <div class="col-xs-3 bs-wizard-step" ng-class="{'active' : currentStep == 4, 'complete' : currentStep > 4, 'disabled' : currentStep < 4}"><!-- complete -->
                   <div class="text-center bs-wizard-stepnum">&nbsp;</div>
                   <div class="progress"><div class="progress-bar"></div></div>
                   <a href="#" class="bs-wizard-dot"></a>
