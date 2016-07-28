@@ -1,0 +1,34 @@
+<div class="text-center">
+           <p><i class="fa fa-columns fa-4x" aria-hidden="true"></i></p>
+           <button class="btn btn-merge" ng-click="selectColumns(3)">
+                 Spalten bestätigen
+           </button>
+    </div>
+    <div class="alert alert-info infotext">
+          Die Prüfungsergebnisliste wurde ausgelesen und folgende Spalten wurden als Matrikelnummer und Prüfungsergebnis identifiziert.
+          Die automatische Auswahl kann manuell geändert oder bestätigt werden.
+          <div class="row" style="margin-top:20px">
+                <div class="col-xs-5">
+                Matrikelnummer
+                </div>
+                <div class="col-xs-5">
+                     <ol class="nya-bs-select" ng-model="predictedColumns.col1">
+                            <li nya-bs-option="(i,option) in results[0] track by $index" data-value="i">
+                                 <a>{{option}}</a>
+                            </li>
+                     </ol>
+                </div>
+          </div>
+          <div class="row" style="margin-top: 20px;margin-bottom: 20px">
+               <div class="col-xs-5">
+               Prüfungsergebnis
+               </div>
+               <div class="col-xs-5">
+                     <ol class="nya-bs-select" ng-model="predictedColumns.col2">
+                           <li nya-bs-option="(i,option) in results[0] track by $index" data-value="i">
+                                <a>{{option}}</a>
+                           </li>
+                    </ol>
+               </div>
+         </div>
+    </div>

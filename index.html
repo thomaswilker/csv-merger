@@ -2,7 +2,7 @@
 <html>
 	<head>
  		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-		<title>Electron boilerplate</title>
+		<title>CSVmerger</title>
 		<link rel="stylesheet" href="index.css">
 		<link rel="stylesheet" href="wizard.css">
 		<link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap.min.css">
@@ -13,13 +13,20 @@
 			const ipc = require('electron').ipcRenderer;
 		</script>
 		<script src="./bower_components/angular/angular.js"></script>
-		<!--<script src="./bower_components/angular-animate/angular-animate.min.js"></script>-->
 		<script src="./bower_components/angular-ui-router/release/angular-ui-router.js"></script>
 		<script src="./bower_components/nya-bootstrap-select/dist/js/nya-bs-select.min.js"></script>
 		<script src="./bower_components/lodash/dist/lodash.min.js"></script>
 		<script src="./bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
 		<script src="./bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+		<script src="./bower_components/rxjs/dist/rx.all.min.js"></script>
+		<script src="./bower_components/rx-angular/dist/rx.angular.min.js"></script>
 		<script src="./app/app.js"></script>
+		<script src="./app/service/csvService.js"></script>
+		<script src="./app/service/stepService.js"></script>
+		<script src="./app/controller/step1/importResults.js"></script>
+		<script src="./app/controller/step2/selectColumns.js"></script>
+		<script src="./app/controller/step3/importRegistrations.js"></script>
+		<script src="./app/controller/step4/exportData.js"></script>
 	</head>
 	<body ng-app="csvMerger">
 			<ui-view class="flexcontainer"></ui-view>
