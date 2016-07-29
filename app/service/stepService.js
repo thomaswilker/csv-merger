@@ -1,16 +1,12 @@
 angular.module('csvMerger')
-.service('stepService', function($state, $rootScope) {
+.factory('stepService', function($state, $rootScope, csvService) {
 
   var current = new Rx.Subject();
 
-  $rootScope.$on('$stateChangeStart', function(event, toState) {
-    console.log(toState.name);
+  $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
     current.onNext(toState.name);
   });
 
-  this.current = (step) => {
-    if(step) current.onNext(step)
-    else return current;
-  };
+  return current;
 
 });

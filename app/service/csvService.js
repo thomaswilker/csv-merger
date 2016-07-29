@@ -1,48 +1,38 @@
 angular.module('csvMerger')
-.service('csvService', function($rootScope, _) {
+.service('csvService', function($rootScope,  _) {
 
-  this.results = [];
-  this.registrations = [];
-  this.columns = {column1 : null, column2 : null};
+  var defaults = { results : [], registrations : [], columns : {column1 : null, column2 : null} };
+  this.defaults = defaults;
+
+  this.results = defaults.results;
+  this.registrations = defaults.registrations;
+  this.columns = defaults.columns;
+
+  this.init = (values) => {
+    this.results = values.results || this.results;
+    this.registrations = values.registrations || this.registrations;
+    this.columns = values.columns || this.columns;
+  };
 
   this.merge = () => {
 
-    var results = this.results;
     var columns = this.columns;
+    var results = this.results.slice(1).map(r => ({ grade : r[columns.col2], data : r }));
+    var resultsMap = _.keyBy(results, (o) => o.data[columns.col1]);
+    var studGrade = (s) => s ? [s.grade, null] : [null, 'x'];
+    var registrations = this.registrations.map(f => [...f.slice(0,2), ...f.slice(2).map(s => [...s.slice(0,5), ...studGrade(resultsMap[s[1]])]) ]);
 
-    var resultsMap = results.slice(1).reduce((o,c) => {
-      if(c && c[columns.col1]) {
-        o[c[columns.col1]] = { grade : c[columns.col2], data : c };
-      }
-      return o;
-    }, {});
-
-    var registrations = this.registrations;
-
-    registrations.forEach((f,index) => f.slice(2).forEach(s => {
-      var stud = resultsMap[s[1]];
-      if(stud) {
-        s[5] =  stud.grade;
-        s[6] =  null;
-      } else {
-        s[5] =  null;
-        s[6] = 'x';
-      }
-    }));
-
-    return { resultsMap : resultsMap, registrations : registrations };
+    return { results : resultsMap, registrations : registrations };
   };
 
   this.stats = () => {
 
-    var merged = this.merge();
-    var results = merged.resultsMap;
-    var registrations = merged.registrations;
+    var {results, registrations} = this.merge();
 
     var elements = _.chain(registrations)
                     .map(r => r.slice(2))
                     .flatten()
-                    .map(r => { return { matrnr : r[1], grade : r[5] } })
+                    .map(r => ({ matrnr : r[1], grade : r[5] }) )
                     .value();
 
     var partByGrade = _.partition(elements, r => r.grade && r.grade !== 'x');
@@ -55,8 +45,9 @@ angular.module('csvMerger')
     var regStudsWithoutResult = _.chain(registrations)
              .flatten()
              .filter(r => r[6] === 'x')
-             .map(r => { return { sign : sign(r[1]), matrnr : r[1] }; })
+             .map(r => ({ sign : sign(r[1]), matrnr : r[1] }))
              .value();
+
 
     var signMap = _.reduce(regStudsWithoutResult, (o, c) => {
       if(!o[c.sign]) o[c.sign] = [c.matrnr];
@@ -82,7 +73,7 @@ angular.module('csvMerger')
       return w;
     });
 
-    var stats = { grades : partByGrade, registrated : partByRegistration, registrations : registrations, results : results, data : results, warnings : warnings };
+    var stats = { registrations : registrations, results : results, warnings : warnings, columns : this.columns };
     return stats;
 
   };

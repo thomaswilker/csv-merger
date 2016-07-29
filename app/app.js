@@ -16,32 +16,72 @@ angular.module('csvMerger', ['ui.router','nya.bootstrap.select', 'ui.bootstrap',
     .state('app.step1', {
       url: "step1",
       templateUrl: "./app/controller/step1/importResults.html",
-      controller : 'ImportResultsCtrl'
+      controller : 'ImportResultsCtrl',
+      onEnter: function(csvService){
+          console.log('app.step1');
+          csvService.init(csvService.defaults);
+      }
     })
     .state('app.step2', {
       url: "step2",
       templateUrl: "./app/controller/step2/selectColumns.html",
-      controller : 'SelectColumnsCtrl'
+      controller : 'SelectColumnsCtrl',
+      onEnter: function($state, csvService){
+          console.log('app.step2 loaded');
+
+          csvService.init({ registrations : [] });
+          if(csvService.results.length < 1)
+            $state.go('app.step1');
+      }
     })
     .state('app.step3', {
       url: "step3",
       templateUrl: "./app/controller/step3/importRegistrations.html",
-      controller : 'ImportRegistrationsCtrl'
+      controller : 'ImportRegistrationsCtrl',
+      onEnter: function($state, csvService){
+          console.log('app.step3');
+
+          csvService.init({ registrations : [] });
+          if(csvService.results.length < 1)
+            $state.go('app.step1');
+      }
     })
     .state('app.step4', {
       url: "step4",
       templateUrl: "./app/controller/step4/exportData.html",
-      controller : 'ExportDataCtrl'
+      controller : 'ExportDataCtrl',
+      onEnter: function($state, csvService){
+          console.log('app.step4');
+
+          if(csvService.registrations.length < 1)
+            $state.go('app.step3');
+
+          if(csvService.results.length < 1)
+            $state.go('app.step1');
+      }
     });
 
 })
 .constant('_', window._)
-.controller('AppCtrl', function($scope, $state, stepService, _) {
+.controller('AppCtrl', function($scope, $state, stepService, csvService, _) {
+
+  this.init = () => csvService.init(csvService.defaults);
+
   $scope.currentStep = 1;
 
-  stepService.current().subscribe((step) => {
+  function showCsv() {
+      var csv = {};
+      ({results : csv.results,
+        registrations : csv.registrations,
+        columns : csv.columns } = csvService);
+      $scope.csv = csv;
+  }
+
+  showCsv();
+
+  stepService.subscribe((step) => {
+    showCsv();
     $scope.currentStep = parseInt(step.slice(step.length-1));
-    console.log($scope.currentStep);
   });
 
 
